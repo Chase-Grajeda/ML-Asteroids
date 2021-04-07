@@ -14,12 +14,8 @@ class Ship(pygame.sprite.Sprite):
 
         super().__init__()
         
-        self.image = pygame.Surface([WIDTH, HEIGHT])
-        self.image.fill(BLACK) 
-        self.image.set_colorkey(BLACK) 
-
-        pygame.draw.polygon(self.image, WHITE, TRI_DIM, 1)
-        self.rect = self.image.get_rect()
+        self.image = pygame.image.load("Assets/Ship.png")
+        self.rect = self.image.get_rect() 
 
     def move_left(self): 
         self.rect.x -= 5 

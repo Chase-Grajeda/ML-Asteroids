@@ -3,6 +3,7 @@ import pygame
 import sys
 from ship import *
 from roid import *
+from testBlock import * 
 
 DISPLAY_W = 700
 DISPLAY_H = 500
