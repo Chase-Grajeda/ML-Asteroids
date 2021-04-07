@@ -10,6 +10,7 @@ DISPLAY_H = 500
 
 
 def run_game():
+    # SETUP ----------------------------------
     # Initialize game space
     pygame.init()
 
@@ -17,19 +18,8 @@ def run_game():
     screen = pygame.display.set_mode([DISPLAY_W, DISPLAY_H])
     pygame.display.set_caption("Test")
 
-    # Sprite container
-    sprite_list = pygame.sprite.Group()
-
     playerShip = Ship()
-    playerShip.rect.x = DISPLAY_W/2 
-    playerShip.rect.y = DISPLAY_H/2
-    
     asteroid = Asteroid() 
-    asteroid.rect.x = DISPLAY_W/3 
-    asteroid.rect.y = DISPLAY_H/3
-
-    sprite_list.add(playerShip)
-    sprite_list.add(asteroid) 
 
     # Run game
     running = True
@@ -37,33 +27,32 @@ def run_game():
     # Create game time, FPS
     clock = pygame.time.Clock()
 
-    # TO EXIT, PRESS SPACE BAR
+    # GAME LOOP ------------------------------
     while running:
 
         events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    running = False
-                if event.key == pygame.K_LEFT:
-                    playerShip.move_left() 
-                    
+        for event in events: 
             if event.type == pygame.QUIT:
                 running = False
+                
+        keys = pygame.key.get_pressed() 
+        if keys[pygame.K_LEFT]: 
+            playerShip.rotate("right")
+        if keys[pygame.K_RIGHT]:
+            playerShip.rotate("left") 
 
+        # UPDATES ----------------------------
         # Placements
         screen.fill((0, 0, 0))  # Black screen
 
-        # Update sprites
-        sprite_list.update()
-        sprite_list.draw(screen)
-
         # Update screen
+        screen.blit(playerShip.getImg(), playerShip.getRect()) 
+        screen.blit(asteroid.getImg(), asteroid.getRect())
+        
         pygame.display.flip()
-
-        # Limit to 60 FPS
         clock.tick(60)
 
+    # EXIT HANDLING 
     pygame.display.quit()
     pygame.quit()
     # sys.quit()

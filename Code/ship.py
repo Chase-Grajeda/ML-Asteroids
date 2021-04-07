@@ -5,7 +5,6 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 WIDTH = 16
 HEIGHT = 20
-TRI_DIM = [[0, 0], [WIDTH/2, HEIGHT], [WIDTH, 0] ] #(x, y) 
 
 class Ship(pygame.sprite.Sprite):
     def __init__(self):
@@ -15,7 +14,30 @@ class Ship(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.image.load("Assets/Ship.png")
-        self.rect = self.image.get_rect() 
+        self.rect = self.image.get_rect(center=(700/2, 500/2)) 
+        self.tempImage = self.image 
+        self.tempRect = self.rect 
+        self.angle = 0
+    
+    def rot(self, surface, angle): 
+        rot_image = pygame.transform.rotozoom(surface, angle, 1) 
+        rot_rect = rot_image.get_rect(center=(700/2, 500/2)) 
+        
+        return rot_image, rot_rect 
+        
+    
+    def rotate(self, direction): 
+        if(direction == "right"): 
+            self.angle += 5
+        if(direction == "left"): 
+            self.angle -= 5 
+            
+        self.tempImage, self.tempRect = self.rot(self.image, self.angle)
 
-    def move_left(self): 
-        self.rect.x -= 5 
+    
+    def getImg(self): 
+        return self.tempImage 
+    
+    
+    def getRect(self): 
+        return self.tempRect 
