@@ -1,0 +1,18 @@
+CURRENT ISSUES: 
+- Current method of spawning ship does not fully work 
+    - Try png method instead, this may fix the issue
+
+TODO: 
+- Need to set up assets for ship 
+    - Draw up stuff on iPad, it will help 
+        - Use dimmensions already decided on 
+    - Need to implement rotation methods 
+
+- Need to set up assets for asteroids 
+    - Have them spawn with random size 
+
+- Need to set up assets for bullets/lazers 
+
+- Create GIT repo for safe keeping 
+
+- Create DOCS 
