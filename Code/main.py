@@ -11,7 +11,7 @@ DISPLAY_H = 500
 
 def run_game():
     # SETUP ----------------------------------
-    # Initialize game space
+    # Initialize game space 
     pygame.init()
 
     # Set window size and caption
