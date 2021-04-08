@@ -9,12 +9,13 @@ HEIGHT = 50
 # Eventually HEIGHT and WIDTH will have to be variable upon class call 
 
 class Asteroid(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, xPos, yPos):
 
         super().__init__()
-        
+        self.xPos = xPos
+        self.yPos = yPos
         self.image = pygame.image.load("Assets/Asteroid_L.png")
-        self.rect = self.image.get_rect(center=(700/3, 500/3))
+        self.rect = self.image.get_rect(center=(self.xPos, self.yPos))
         
     def getImg(self): 
         return self.image 

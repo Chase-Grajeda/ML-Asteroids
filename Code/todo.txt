@@ -1,7 +1,24 @@
 CURRENT ISSUES: 
-- 
+- Ship asset is not thick enough/loss of quality on rotation
 
 TODO: 
 - Create Spawn system for asteroids 
+    - Spawn asteroids in spawn box 
+    - Find a way to safely remove asteroids from game 
+    - Spawn asteroids with a trajectors ~towards~ center 
+        - Should have some degrees of freedom 
+
 
 - Need to set up assets for bullets/lazers 
+
+
+
+
+For spawning asteroid: 
+- Generate random spawn coordinates (x,y)
+- Create new asteroid object, centered on (x,y) 
+- Add to list of asteroids 
+
+
+NOTES: 
+- Asteroid spawner is not 100% random; this is not the focus 
