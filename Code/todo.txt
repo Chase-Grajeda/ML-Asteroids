@@ -1,4 +1,8 @@
 CURRENT ISSUES: 
+- Can't get propre trajectory 
+    - Confirmed, rect.x and rect.y only take whole numbers 
+    - How else can I move the sprite without using whole numbers? 
+    - Implement in asteroid move() function 
 - Ship asset is not thick enough/loss of quality on rotation
 
 TODO: 

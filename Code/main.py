@@ -1,5 +1,6 @@
 import numpy as np 
 import pygame
+import math 
 import sys
 from ship import *
 from roid import *
@@ -42,7 +43,6 @@ def run_game():
     pygame.display.set_caption("Test")
     
     playerShip = Ship()
-    asteroid = Asteroid(-1, 300) 
     
     asteroid_list = []
 
@@ -54,7 +54,10 @@ def run_game():
     clock = pygame.time.Clock()
     
     SPAWN_AST = pygame.USEREVENT 
+    MOVE_AST = pygame.USEREVENT 
+    
     pygame.time.set_timer(SPAWN_AST, 1000) # Trigger SPAWN_AST every 1s 
+    pygame.time.set_timer(MOVE_AST, 3000) # Every 3s 
 
     # GAME LOOP ------------------------------
     while running:
@@ -64,8 +67,11 @@ def run_game():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == SPAWN_AST: 
-                if len(asteroid_list) < 5: 
+                if len(asteroid_list) == 0: 
                     spawn_asteroid(asteroid_list) 
+            if event.type == MOVE_AST: 
+                for ast in asteroid_list: 
+                    ast.move() 
                 
         keys = pygame.key.get_pressed() 
         if keys[pygame.K_LEFT]: 
@@ -77,9 +83,9 @@ def run_game():
         # Placements
         screen.fill((0, 0, 0))  # Black screen
         
-        for ast in asteroid_list:
+        #for ast in asteroid_list:
             # Move every asteroid +1 based on its trajectory  
-            print("Weh") 
+          #  ast.move() 
 
         # Update screen
         screen.blit(playerShip.getImg(), playerShip.getRect()) 
