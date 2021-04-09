@@ -21,4 +21,7 @@ For spawning asteroid:
 
 
 NOTES: 
-- Asteroid spawner is not 100% random; this is not the focus 
+- Asteroid spawner is not 100% random 
+    - Asteroids are more likely to spawn on the sides rather than top or bottom 
+    - Left and right have uniform probability 
+    - Top and bottom have uniform probability 

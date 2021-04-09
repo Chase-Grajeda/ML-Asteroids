@@ -17,6 +17,8 @@ class Asteroid(pygame.sprite.Sprite):
         self.image = pygame.image.load("Assets/Asteroid_L.png")
         self.rect = self.image.get_rect(center=(self.xPos, self.yPos))
         
+        # Remember, slope is y2-y1/x2-x1
+        
     def getImg(self): 
         return self.image 
     

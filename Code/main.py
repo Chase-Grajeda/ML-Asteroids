@@ -11,8 +11,20 @@ BORDER_BOX = (100, 100, 500, 300)
 
 def spawn_asteroid(asteroid_list): 
     
-    xPos = np.random.randint(1, 701) 
-    yPos = np.random.randint(1, 501) 
+    side = np.random.randint(0, 4) # Left = 0, Right = 1, Top = 2, Bottom = 3
+    if side == 0: 
+        xPos = np.random.randint(0, 101) 
+        yPos = np.random.randint(0, 501) 
+    elif side == 1: 
+        xPos = np.random.randint(600, 701) 
+        yPos = np.random.randint(0, 501) 
+    elif side == 2: 
+        xPos = np.random.randint(100, 601) 
+        yPos = np.random.randint(0, 101) 
+    elif side == 3: 
+        xPos = np.random.randint(100, 601) 
+        yPos = np.random.randint(400, 501) 
+
     asteroid = Asteroid(xPos, yPos) 
     asteroid_list.append(asteroid) 
     
@@ -28,12 +40,11 @@ def run_game():
     # Set window size and caption
     screen = pygame.display.set_mode([DISPLAY_W, DISPLAY_H])
     pygame.display.set_caption("Test")
-
-    
     
     playerShip = Ship()
-    asteroid = Asteroid(700/3, 500/3) 
-    asteroid_list = [asteroid]
+    asteroid = Asteroid(-1, 300) 
+    
+    asteroid_list = []
 
     # Run game
     running = True
@@ -53,7 +64,8 @@ def run_game():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == SPAWN_AST: 
-                spawn_asteroid(asteroid_list) 
+                if len(asteroid_list) < 5: 
+                    spawn_asteroid(asteroid_list) 
                 
         keys = pygame.key.get_pressed() 
         if keys[pygame.K_LEFT]: 
@@ -64,6 +76,10 @@ def run_game():
         # UPDATES ----------------------------
         # Placements
         screen.fill((0, 0, 0))  # Black screen
+        
+        for ast in asteroid_list:
+            # Move every asteroid +1 based on its trajectory  
+            print("Weh") 
 
         # Update screen
         screen.blit(playerShip.getImg(), playerShip.getRect()) 
