@@ -2,6 +2,7 @@
 
 import pygame
 import math 
+import numpy as np 
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -13,11 +14,12 @@ xCenter = 700/2
 yCenter = 500/2 
 
 class Asteroid(pygame.sprite.Sprite):
-    def __init__(self, xPos, yPos):
+    def __init__(self, xPos, yPos, speed):
 
         super().__init__()
         self.xPos = xPos # Unused
         self.yPos = yPos # Unused 
+        self.speed = speed 
         self.image = pygame.image.load("Assets/Asteroid_L.png")
         self.rect = self.image.get_rect(center=(xPos, yPos))
         
@@ -25,8 +27,6 @@ class Asteroid(pygame.sprite.Sprite):
         # self.radian = math.atan2(1, 0) 
         self.dx = math.cos(self.radian) 
         self.dy = math.sin(self.radian) 
-
-        # Remember, slope is y2-y1/x2-x1
         
     def getImg(self): 
         return self.image 
@@ -35,5 +35,21 @@ class Asteroid(pygame.sprite.Sprite):
         return self.rect
     
     def move(self): 
-        self.rect.x += self.dx 
-        self.rect.y += self.dy 
+        self.xPos += self.dx * self.speed 
+        self.yPos += self.dy * self.speed 
+        self.rect.center = (self.xPos, self.yPos) 
+        
+    def updateRect(self): 
+        return self.xPos, self.yPos, WIDTH, HEIGHT
+        
+    def killCheck(self): 
+        if self.xPos >= 700 + 50 or self.xPos <= 0 - 50 or \
+            self.yPos >= 500 + 50 or self.yPos <= 0 - 50: 
+            
+            self.kill() 
+            print("Killed asteroid") 
+            return 
+        
+        else: 
+            return 
+            

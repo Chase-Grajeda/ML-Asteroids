@@ -13,21 +13,36 @@ BORDER_BOX = (100, 100, 500, 300)
 def spawn_asteroid(asteroid_list): 
     
     side = np.random.randint(0, 4) # Left = 0, Right = 1, Top = 2, Bottom = 3
+    #if side == 0: 
+    #    xPos = np.random.randint(0, 101) 
+    #    yPos = np.random.randint(0, 501) 
+    #elif side == 1: 
+    #    xPos = np.random.randint(600, 701) 
+    #    yPos = np.random.randint(0, 501) 
+    #elif side == 2: 
+    #    xPos = np.random.randint(100, 601) 
+    #    yPos = np.random.randint(0, 101) 
+    #elif side == 3: 
+    #    xPos = np.random.randint(100, 601) 
+    #    yPos = np.random.randint(400, 501) 
+    
     if side == 0: 
-        xPos = np.random.randint(0, 101) 
+        xPos = 0
         yPos = np.random.randint(0, 501) 
     elif side == 1: 
-        xPos = np.random.randint(600, 701) 
+        xPos = 700
         yPos = np.random.randint(0, 501) 
     elif side == 2: 
-        xPos = np.random.randint(100, 601) 
-        yPos = np.random.randint(0, 101) 
+        xPos = np.random.randint(0, 701) 
+        yPos = 0 
     elif side == 3: 
-        xPos = np.random.randint(100, 601) 
-        yPos = np.random.randint(400, 501) 
+        xPos = np.random.randint(0, 701) 
+        yPos = 500 
 
-    asteroid = Asteroid(xPos, yPos) 
-    asteroid_list.append(asteroid) 
+    speed = np.random.randint(1, 3)
+    
+    asteroid = Asteroid(xPos, yPos, speed) 
+    asteroid_list.add(asteroid) 
     
     print("New asteroid") 
     
@@ -44,7 +59,8 @@ def run_game():
     
     playerShip = Ship()
     
-    asteroid_list = []
+    asteroid_list = pygame.sprite.Group() 
+    
 
     # Run game
     running = True
@@ -57,7 +73,6 @@ def run_game():
     MOVE_AST = pygame.USEREVENT 
     
     pygame.time.set_timer(SPAWN_AST, 1000) # Trigger SPAWN_AST every 1s 
-    pygame.time.set_timer(MOVE_AST, 3000) # Every 3s 
 
     # GAME LOOP ------------------------------
     while running:
@@ -69,9 +84,7 @@ def run_game():
             if event.type == SPAWN_AST: 
                 if len(asteroid_list) == 0: 
                     spawn_asteroid(asteroid_list) 
-            if event.type == MOVE_AST: 
-                for ast in asteroid_list: 
-                    ast.move() 
+
                 
         keys = pygame.key.get_pressed() 
         if keys[pygame.K_LEFT]: 
@@ -83,16 +96,16 @@ def run_game():
         # Placements
         screen.fill((0, 0, 0))  # Black screen
         
-        #for ast in asteroid_list:
+        for ast in asteroid_list:
             # Move every asteroid +1 based on its trajectory  
-          #  ast.move() 
+            ast.move() 
+            ast.killCheck() 
 
         # Update screen
         screen.blit(playerShip.getImg(), playerShip.getRect()) 
         for ast in asteroid_list: 
+            newX, newY, xSize, ySize = ast.updateRect()
             screen.blit(ast.getImg(), ast.getRect())
-        
-        # screen.blit(asteroid.getImg(), asteroid.getRect())
         
         # Testing 
         if spawnBox == True: 
