@@ -3,9 +3,9 @@ CURRENT ISSUES:
 
 TODO: 
 - Need to set up assets for bullets/lazers 
-    - Create asset 
-    - Desgin shooting system 
-    - Design collision system 
+    - Create asset              [WIP]
+    - Desgin shooting system    [WIP]
+    - Design collision system   [WIP]
 
 - Create in-game timer 
 - Create point system 
