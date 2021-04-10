@@ -14,19 +14,6 @@ BORDER_BOX = (100, 100, 500, 300)
 def spawn_asteroid(asteroid_list): 
     
     side = np.random.randint(0, 4) # Left = 0, Right = 1, Top = 2, Bottom = 3
-    #if side == 0: 
-    #    xPos = np.random.randint(0, 101) 
-    #    yPos = np.random.randint(0, 501) 
-    #elif side == 1: 
-    #    xPos = np.random.randint(600, 701) 
-    #    yPos = np.random.randint(0, 501) 
-    #elif side == 2: 
-    #    xPos = np.random.randint(100, 601) 
-    #    yPos = np.random.randint(0, 101) 
-    #elif side == 3: 
-    #    xPos = np.random.randint(100, 601) 
-    #    yPos = np.random.randint(400, 501) 
-    
     if side == 0: 
         xPos = 0
         yPos = np.random.randint(0, 501) 
@@ -48,10 +35,29 @@ def spawn_asteroid(asteroid_list):
     print("New asteroid") 
     
 
-def fire(bullet_list): 
-    bullet = Bullet(700/2, 500/2) 
+def fire(bullet_list, playerShip): 
+    # bullet = Bullet(700/2, 500/2) 
+    # bullet_list.add(bullet) 
+    
+    center = playerShip.getORect().center 
+    
+    posY = playerShip.getRect().top 
+    posX = center[0] 
+    radius = abs(posY - center[1])  
+    
+    angle = playerShip.getAngle() 
+    
+    dx = radius * math.cos(angle) 
+    dy = radius * math.sin(angle) 
+    
+    posX += dx 
+    posY += dy 
+    
+    bullet = Bullet(posX, posY) 
     bullet_list.add(bullet) 
-
+    
+    # None of the above works, finds the incorrect circle 
+    
 
 
 
@@ -95,7 +101,7 @@ def run_game():
                     spawn_asteroid(asteroid_list) 
             if event.type == pygame.KEYDOWN: 
                 if event.key == pygame.K_SPACE: 
-                    fire(bullet_list) 
+                    fire(bullet_list, playerShip) 
 
                 
         keys = pygame.key.get_pressed() 

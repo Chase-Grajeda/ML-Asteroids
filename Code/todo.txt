@@ -1,9 +1,13 @@
 CURRENT ISSUES: 
+- Need to find equation of circle for playerShip 
+    - Not an ellipse, as it rotates around its center
+
+
 - Ship asset is not thick enough/loss of quality on rotation
 
 TODO: 
 - Need to set up assets for bullets/lazers 
-    - Create asset              [WIP]
+    - Create asset              [DONE]
     - Desgin shooting system    [WIP]
     - Design collision system   [WIP]
 

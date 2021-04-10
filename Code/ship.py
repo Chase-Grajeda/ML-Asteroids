@@ -41,3 +41,9 @@ class Ship(pygame.sprite.Sprite):
     
     def getRect(self): 
         return self.tempRect 
+    
+    def getAngle(self): 
+        return self.angle 
+    
+    def getORect(self): 
+        return self.rect 
