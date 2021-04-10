@@ -4,6 +4,7 @@ import math
 import sys
 from ship import *
 from roid import *
+from bullet import * 
 from testBlock import * 
 
 DISPLAY_W = 700
@@ -47,6 +48,12 @@ def spawn_asteroid(asteroid_list):
     print("New asteroid") 
     
 
+def fire(bullet_list): 
+    bullet = Bullet(700/2, 500/2) 
+    bullet_list.add(bullet) 
+
+
+
 
 def run_game():
     # SETUP ----------------------------------
@@ -60,7 +67,7 @@ def run_game():
     playerShip = Ship()
     
     asteroid_list = pygame.sprite.Group() 
-    
+    bullet_list = pygame.sprite.Group() 
     
     
 
@@ -86,6 +93,9 @@ def run_game():
             if event.type == SPAWN_AST: 
                 if len(asteroid_list) < 5: 
                     spawn_asteroid(asteroid_list) 
+            if event.type == pygame.KEYDOWN: 
+                if event.key == pygame.K_SPACE: 
+                    fire(bullet_list) 
 
                 
         keys = pygame.key.get_pressed() 
@@ -102,6 +112,9 @@ def run_game():
         for ast in asteroid_list:
             ast.move() 
             ast.killCheck() 
+        for blt in bullet_list: 
+            blt.move() 
+            blt.killCheck() 
             
         # Check to see if any asteroids have collided with the player 
         collision = pygame.sprite.spritecollide(playerShip, asteroid_list, False) 
@@ -113,6 +126,8 @@ def run_game():
         for ast in asteroid_list: 
             newX, newY, xSize, ySize = ast.updateRect()
             screen.blit(ast.getImg(), ast.getRect())
+        for blt in bullet_list: 
+            screen.blit(blt.getImg(), blt.getRect())
         
         # Testing 
         if spawnBox == True: 

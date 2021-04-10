@@ -17,8 +17,8 @@ class Asteroid(pygame.sprite.Sprite):
     def __init__(self, xPos, yPos, speed):
 
         super().__init__()
-        self.xPos = xPos # Unused
-        self.yPos = yPos # Unused 
+        self.xPos = xPos 
+        self.yPos = yPos 
         self.speed = speed 
         self.image = pygame.image.load("Assets/Asteroid_L.png")
         self.rect = self.image.get_rect(center=(xPos, yPos))
