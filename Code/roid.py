@@ -24,7 +24,7 @@ class Asteroid(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(xPos, yPos))
         
         self.radian = math.atan2(yCenter - yPos, xCenter - xPos) 
-        # self.radian = math.atan2(1, 0) 
+        self.radian += np.random.uniform(-0.3, 0.3) 
         self.dx = math.cos(self.radian) 
         self.dy = math.sin(self.radian) 
         
@@ -53,3 +53,5 @@ class Asteroid(pygame.sprite.Sprite):
         else: 
             return 
             
+    def destroy(self): 
+        self.kill() 

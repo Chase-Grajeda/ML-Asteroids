@@ -61,10 +61,12 @@ def run_game():
     
     asteroid_list = pygame.sprite.Group() 
     
+    
+    
 
     # Run game
     running = True
-    spawnBox = True # For testing 
+    spawnBox = False # For testing 
 
     # Create game time, FPS
     clock = pygame.time.Clock()
@@ -82,7 +84,7 @@ def run_game():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == SPAWN_AST: 
-                if len(asteroid_list) == 0: 
+                if len(asteroid_list) < 5: 
                     spawn_asteroid(asteroid_list) 
 
                 
@@ -96,10 +98,15 @@ def run_game():
         # Placements
         screen.fill((0, 0, 0))  # Black screen
         
+        # Move asteroids based on their trajectories 
         for ast in asteroid_list:
-            # Move every asteroid +1 based on its trajectory  
             ast.move() 
             ast.killCheck() 
+            
+        # Check to see if any asteroids have collided with the player 
+        collision = pygame.sprite.spritecollide(playerShip, asteroid_list, False) 
+        for ast in collision: 
+            ast.destroy() 
 
         # Update screen
         screen.blit(playerShip.getImg(), playerShip.getRect()) 

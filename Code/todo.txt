@@ -2,11 +2,14 @@ CURRENT ISSUES:
 - Ship asset is not thick enough/loss of quality on rotation
 
 TODO: 
-- Create Spawn system for asteroids 
-    - Give trajectories a degree of freedom 
-
 - Need to set up assets for bullets/lazers 
+    - Create asset 
+    - Desgin shooting system 
+    - Design collision system 
 
+- Create in-game timer 
+- Create point system 
+- Pause/play? 
 
 
 
