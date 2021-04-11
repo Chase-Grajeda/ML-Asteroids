@@ -20,7 +20,7 @@ class Ship(pygame.sprite.Sprite):
         self.angle = 0
     
     def rot(self, surface, angle): 
-        rot_image = pygame.transform.rotozoom(surface, angle, 1) 
+        rot_image = pygame.transform.rotozoom(surface, angle*-1, 1) 
         rot_rect = rot_image.get_rect(center=(700/2, 500/2)) 
         
         return rot_image, rot_rect 

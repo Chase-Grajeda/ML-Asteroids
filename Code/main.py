@@ -10,6 +10,7 @@ from testBlock import *
 DISPLAY_W = 700
 DISPLAY_H = 500
 BORDER_BOX = (100, 100, 500, 300) 
+AST_LIMIT = 5
 
 def spawn_asteroid(asteroid_list): 
     
@@ -36,24 +37,25 @@ def spawn_asteroid(asteroid_list):
     
 
 def fire(bullet_list, playerShip): 
-    # bullet = Bullet(700/2, 500/2) 
-    # bullet_list.add(bullet) 
     
     center = playerShip.getORect().center 
+    top = (playerShip.getORect()).top
     
-    posY = playerShip.getRect().top 
-    posX = center[0] 
-    radius = abs(posY - center[1])  
+    radius = center[1] - top 
+    
+    posX = center[0]
+    posY = center[1]
     
     angle = playerShip.getAngle() 
     
-    dx = radius * math.cos(angle) 
-    dy = radius * math.sin(angle) 
+    # Trig is weird because of how pygame percieves the grid space 
+    dx = radius * math.sin(math.radians(angle)) 
+    dy = radius * math.cos(math.radians(angle)) 
     
-    posX += dx 
-    posY += dy 
+    posX += dx  
+    posY -= dy 
     
-    bullet = Bullet(posX, posY) 
+    bullet = Bullet(posX, posY, angle) 
     bullet_list.add(bullet) 
     
     # None of the above works, finds the incorrect circle 
@@ -97,7 +99,7 @@ def run_game():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == SPAWN_AST: 
-                if len(asteroid_list) < 5: 
+                if len(asteroid_list) < AST_LIMIT: 
                     spawn_asteroid(asteroid_list) 
             if event.type == pygame.KEYDOWN: 
                 if event.key == pygame.K_SPACE: 
@@ -106,9 +108,9 @@ def run_game():
                 
         keys = pygame.key.get_pressed() 
         if keys[pygame.K_LEFT]: 
-            playerShip.rotate("right")
+            playerShip.rotate("left")
         if keys[pygame.K_RIGHT]:
-            playerShip.rotate("left") 
+            playerShip.rotate("right") 
 
         # UPDATES ----------------------------
         # Placements
@@ -127,6 +129,15 @@ def run_game():
         for ast in collision: 
             ast.destroy() 
 
+        # Check to see if any bullets have collided with an asteroid 
+        for blt in bullet_list: 
+            bullet_x_ast = pygame.sprite.spritecollide(blt, asteroid_list, False) 
+            for ast in bullet_x_ast: 
+                print("Collision") 
+                ast.destroy() 
+                blt.destroy() 
+        
+        
         # Update screen
         screen.blit(playerShip.getImg(), playerShip.getRect()) 
         for ast in asteroid_list: 
