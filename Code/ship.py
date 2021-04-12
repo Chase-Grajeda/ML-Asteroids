@@ -8,9 +8,7 @@ HEIGHT = 20
 
 class Ship(pygame.sprite.Sprite):
     def __init__(self):
-        # self.ship = pygame.draw.rect(screen, WHITE, [150, 10, 50, 20], 2)
-        # self.ship = pygame.draw.polygon(screen, WHITE, [[10, 10], [0, 200], [200, 200]], 3)
-
+        
         super().__init__()
         
         self.image = pygame.image.load("Assets/Ship.png")

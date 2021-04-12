@@ -1,20 +1,14 @@
 CURRENT ISSUES: 
-- Need to find equation of circle for playerShip 
-    - Not an ellipse, as it rotates around its center
+- Make class / list for all text bodies (it's just more efficient) 
 
 
 - Ship asset is not thick enough/loss of quality on rotation
 
 TODO: 
-- Need to set up assets for bullets/lazers 
-    - Create asset              [DONE]
-    - Desgin shooting system    [DONE]
-    - Design collision system   [DONE]
-
-- Create in-game timer 
-- Create point system 
-- Fire rate? 
+- Make assets for smaller asteroids (scaling won't work) 
 - Pause/play? 
+- Game over (remove ship)? 
+- Begin research on machine learning
 
 
 
@@ -24,3 +18,8 @@ NOTES:
     - Asteroids are more likely to spawn on the sides rather than top or bottom 
     - Left and right have uniform probability 
     - Top and bottom have uniform probability 
+
+- POINTS: 
+    - 20  Large 
+    - 50  Medium 
+    - 100 Small 

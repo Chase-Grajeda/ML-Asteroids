@@ -10,7 +10,8 @@ from testBlock import *
 DISPLAY_W = 700
 DISPLAY_H = 500
 BORDER_BOX = (100, 100, 500, 300) 
-AST_LIMIT = 5
+AST_LIMIT = 10
+FIRERATE = 200 # Milliseconds 
 
 def spawn_asteroid(asteroid_list): 
     
@@ -77,7 +78,11 @@ def run_game():
     asteroid_list = pygame.sprite.Group() 
     bullet_list = pygame.sprite.Group() 
     
+    gameOver = False 
     
+    score = 0
+    
+    last_shot = 0 
 
     # Run game
     running = True
@@ -90,7 +95,9 @@ def run_game():
     MOVE_AST = pygame.USEREVENT 
     
     pygame.time.set_timer(SPAWN_AST, 1000) # Trigger SPAWN_AST every 1s 
-
+    
+    font = pygame.font.SysFont("Bahnschrift", 20) # Font 
+    
     # GAME LOOP ------------------------------
     while running:
 
@@ -103,7 +110,9 @@ def run_game():
                     spawn_asteroid(asteroid_list) 
             if event.type == pygame.KEYDOWN: 
                 if event.key == pygame.K_SPACE: 
-                    fire(bullet_list, playerShip) 
+                    if(pygame.time.get_ticks() >= last_shot+FIRERATE or last_shot == 0):
+                        last_shot = pygame.time.get_ticks() 
+                        fire(bullet_list, playerShip) 
 
                 
         keys = pygame.key.get_pressed() 
@@ -115,6 +124,21 @@ def run_game():
         # UPDATES ----------------------------
         # Placements
         screen.fill((0, 0, 0))  # Black screen
+        
+        # Timer, might move this to another class 
+        milliseconds = pygame.time.get_ticks() 
+        seconds = format(int((milliseconds / 1000) % 60), "02") 
+        minutes = format(int((milliseconds / 1000) / 60), "02") 
+        time = str(minutes + " : " + seconds) 
+        
+        time_text = font.render(time, True, WHITE) 
+        # time_textRect = time_text.get_rect(center=(655, 20))
+        time_textRect = time_text.get_rect(right=690, top=5) 
+        
+        # Score text, might move this to another class 
+        score_text = font.render(str(format(score, "08")), True, WHITE)
+        score_textRect = score_text.get_rect(left=10, top=5)
+        
         
         # Move asteroids based on their trajectories 
         for ast in asteroid_list:
@@ -133,15 +157,17 @@ def run_game():
         for blt in bullet_list: 
             bullet_x_ast = pygame.sprite.spritecollide(blt, asteroid_list, False) 
             for ast in bullet_x_ast: 
-                print("Collision") 
                 ast.destroy() 
                 blt.destroy() 
+                score += 20
         
         
         # Update screen
+        screen.blit(time_text, time_textRect) 
+        screen.blit(score_text, score_textRect)
         screen.blit(playerShip.getImg(), playerShip.getRect()) 
         for ast in asteroid_list: 
-            newX, newY, xSize, ySize = ast.updateRect()
+            # newX, newY, xSize, ySize = ast.updateRect()
             screen.blit(ast.getImg(), ast.getRect())
         for blt in bullet_list: 
             screen.blit(blt.getImg(), blt.getRect())
@@ -151,7 +177,7 @@ def run_game():
             pygame.draw.rect(screen, WHITE, BORDER_BOX, 2) 
         
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(60) # 60FPS
 
     # EXIT HANDLING 
     pygame.display.quit()
