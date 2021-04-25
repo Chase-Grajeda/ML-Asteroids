@@ -5,11 +5,13 @@ CURRENT ISSUES:
 - Ship asset is not thick enough/loss of quality on rotation
 
 TODO: 
-- Make assets for smaller asteroids (scaling won't work) 
-- Pause/play? 
-- Game over (remove ship)? 
-- Begin research on machine learning
+- Implement Training environment 
+    - Generate mulitple populations (STRESS TEST!!!!) 
+        - Each population will have its own set of asteroids and player 
+        - None of the populations will be able to interact with each other 
 
+- Research how to machine learn 
+- Game Over handling for solo play 
 
 
 

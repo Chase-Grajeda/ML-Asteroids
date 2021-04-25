@@ -45,3 +45,7 @@ class Ship(pygame.sprite.Sprite):
     
     def getORect(self): 
         return self.rect 
+    
+    def destroy(self): 
+        self.kill() 
+        print("Killed ship") 
