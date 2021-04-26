@@ -148,7 +148,7 @@ def run_game():
         clock = pygame.time.Clock()
         
         SPAWN_AST = pygame.USEREVENT 
-        MOVE_AST = pygame.USEREVENT 
+        # MOVE_AST = pygame.USEREVENT 
         
         pygame.time.set_timer(SPAWN_AST, 1000) # Trigger SPAWN_AST every 1s 
         
@@ -242,15 +242,53 @@ def run_game():
     
     if progTrain == True: 
         
+        clock = pygame.time.Clock() 
+        
         populations = []
         
-        # Generate 
-        for i in range(0, 10): 
-            populations.append(Population())
+        SPAWN_AST = pygame.USEREVENT 
+        pygame.time.set_timer(SPAWN_AST, 1000) # Spawn asteroid every 1s 
+        
+        # Generate populations 
+        populationCount = 200 # 10
+        for i in range(0, populationCount): 
+            newPopulation = Population() 
+            populations.append(newPopulation)
         
         while progTrain:
-            # This will eventually do things 
-            progTrain = False 
+            
+            events = pygame.event.get() 
+            for event in events: 
+                if event.type == pygame.QUIT: 
+                    progTrain = False 
+                if event.type == SPAWN_AST: 
+                    for p in populations: 
+                        if len(p.getAstList()) < AST_LIMIT: 
+                            p.spawnAsteroid() 
+                    
+            # Test if all populations are present and movement
+            
+            for p in populations: 
+                if p.getStatus() == False: 
+                    move = np.random.randint(0,2) # 0 = Left, 1 = Right 
+                    p.shipMove(move)  
+                    
+                    for ast in p.getAstList(): 
+                        ast.move() 
+                        ast.killCheck() 
+            
+            
+            # UPDATES 
+            screen.fill((0, 0, 0)) # Black 
+            
+            for p in populations: 
+                screen.blit(p.getShipImg(), p.getShipRect()) 
+                for ast in p.getAstList(): 
+                    screen.blit(ast.getImg(), ast.getRect()) 
+                    
+            
+            pygame.display.flip() 
+            clock.tick(60) 
     
     # -----------------------------------------
     
@@ -260,7 +298,9 @@ def run_game():
         while progTest: 
             # This will eventually do things 
             progTest = False 
+
             
+                        
     # ----------------------------------------- 
 
     # EXIT HANDLING 

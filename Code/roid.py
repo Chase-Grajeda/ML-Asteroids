@@ -47,7 +47,6 @@ class Asteroid(pygame.sprite.Sprite):
             self.yPos >= 500 + 50 or self.yPos <= 0 - 50: 
             
             self.kill() 
-            print("Killed asteroid") 
             return 
         
         else: 
@@ -55,4 +54,3 @@ class Asteroid(pygame.sprite.Sprite):
             
     def destroy(self): 
         self.kill() 
-        print("Killed asteroid")

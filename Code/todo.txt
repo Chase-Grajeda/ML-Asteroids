@@ -1,14 +1,16 @@
 CURRENT ISSUES: 
 - Make class / list for all text bodies (it's just more efficient) 
 
-
-- Ship asset is not thick enough/loss of quality on rotation
-
 TODO: 
 - Implement Training environment 
-    - Generate mulitple populations (STRESS TEST!!!!) 
-        - Each population will have its own set of asteroids and player 
-        - None of the populations will be able to interact with each other 
+    - Bullet spawns for populations 
+    - Score/fitness for populations 
+    - Collisions for populations 
+    - Kill population at game over 
+    - Start new generation at game over 
+    - Generation tracking 
+
+- Implement vision for ships 
 
 - Research how to machine learn 
 - Game Over handling for solo play 
@@ -19,9 +21,16 @@ NOTES:
 - Asteroid spawner is not 100% random 
     - Asteroids are more likely to spawn on the sides rather than top or bottom 
     - Left and right have uniform probability 
-    - Top and bottom have uniform probability 
+    - Top and bottom have uniform probability
 
-- POINTS: 
-    - 20  Large 
-    - 50  Medium 
-    - 100 Small 
+- The good video: 
+    - https://www.youtube.com/watch?v=JWJCSaO0vew&list=PLZ1QII7yudbebDQ1Kiqdh1LNz6PavcptO&index=7
+
+
+
+
+
+
+
+
+    

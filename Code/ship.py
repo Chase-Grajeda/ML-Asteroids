@@ -48,4 +48,3 @@ class Ship(pygame.sprite.Sprite):
     
     def destroy(self): 
         self.kill() 
-        print("Killed ship") 
