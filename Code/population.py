@@ -4,6 +4,7 @@ import numpy as np
 from ship import * 
 from roid import * 
 from bullet import * 
+from vision import * 
 
 class Population(): 
     def __init__(self): 
@@ -23,6 +24,8 @@ class Population():
         self.last_shot = 0 
         self.firerate = 200 
         self.bullet_list = pygame.sprite.Group() 
+        
+        self.los = []
         
     # Functions 
     def getStatus(self): 
@@ -105,4 +108,14 @@ class Population():
             ast.destroy() 
         for blt in self.bullet_list: 
             blt.destroy() 
+            
+    
+    def genVision(self, surface): 
+        angle = 0 
+        for i in range(0, 8): 
+            self.los.append(Vision(surface, angle))
+            angle += 45
+            
+    def getLos(self): 
+        return self.los 
     

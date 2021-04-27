@@ -7,17 +7,19 @@ from roid import *
 from bullet import * 
 from testBlock import * 
 from population import * 
+from vision import * 
 
 DISPLAY_W = 700
 DISPLAY_H = 500
 BORDER_BOX = (100, 100, 500, 300) 
-AST_LIMIT = 10
+AST_LIMIT = 1
 FIRERATE = 200 # Milliseconds 
 
-def genPopulations(populations, count): 
+def genPopulations(populations, count, surface): 
     populations.clear() 
     for i in range(0, count): 
         newPopulation = Population() 
+        newPopulation.genVision(surface) 
         populations.append(newPopulation) 
 
 def spawn_asteroid(asteroid_list): 
@@ -248,7 +250,8 @@ def run_game():
         
         clock = pygame.time.Clock() 
         
-        invinsible = False 
+        invinsible = True 
+        showLos = False 
         
         populations = []
         
@@ -258,7 +261,7 @@ def run_game():
         # Generate populations 
         populationCount = 1 
         genNum = 1
-        genPopulations(populations, populationCount) 
+        genPopulations(populations, populationCount, screen) 
         
         
         while progTrain:
@@ -270,7 +273,7 @@ def run_game():
             if popAlive == 0: 
                 genNum += 1
                 print("Starting generation", genNum) 
-                genPopulations(populations, populationCount) 
+                genPopulations(populations, populationCount, screen) 
                 
             
             events = pygame.event.get() 
@@ -302,6 +305,13 @@ def run_game():
                             p.nuke() 
                             p.gameOver = True 
                     
+                    # Vision reactions 
+                    los = p.getLos()
+                    for i in range(0, len(los)): 
+                        vision_x_ast = pygame.sprite.spritecollide(los[i], p.getAstList(), False) 
+                        if len(vision_x_ast) > 0: 
+                            print("Collision on: ", i) 
+                    
                     move = np.random.randint(0,2) # 0 = Left, 1 = Right 
                     p.shipMove(move)  
                     
@@ -318,7 +328,6 @@ def run_game():
             
             # UPDATES 
             screen.fill((0, 0, 0)) # Black 
-            pygame.draw.line(screen, WHITE, (50, 50), (600, 300), 1)
             
             for p in populations: 
                 if p.getStatus() == False: 
@@ -327,6 +336,9 @@ def run_game():
                         screen.blit(ast.getImg(), ast.getRect()) 
                     for blt in p.getBltList(): 
                         screen.blit(blt.getImg(), blt.getRect()) 
+                    if showLos == True: 
+                        for los in p.getLos(): 
+                            screen.blit(los.getImg(), los.getRect())
                     
             
             pygame.display.flip() 

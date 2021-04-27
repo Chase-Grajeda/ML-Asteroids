@@ -2,10 +2,6 @@ CURRENT ISSUES:
 - Make class / list for all text bodies (it's just more efficient) 
 
 TODO: 
-- Implement vision
-    - Add environment vision 
-    - Add ship vision ("radar") 
-
 - Research how to machine learn 
 - Game Over handling for solo play 
 
