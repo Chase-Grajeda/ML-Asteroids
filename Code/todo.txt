@@ -2,15 +2,9 @@ CURRENT ISSUES:
 - Make class / list for all text bodies (it's just more efficient) 
 
 TODO: 
-- Implement Training environment 
-    - Bullet spawns for populations 
-    - Score/fitness for populations 
-    - Collisions for populations 
-    - Kill population at game over 
-    - Start new generation at game over 
-    - Generation tracking 
-
-- Implement vision for ships 
+- Implement vision
+    - Add environment vision 
+    - Add ship vision ("radar") 
 
 - Research how to machine learn 
 - Game Over handling for solo play 

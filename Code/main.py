@@ -14,6 +14,12 @@ BORDER_BOX = (100, 100, 500, 300)
 AST_LIMIT = 10
 FIRERATE = 200 # Milliseconds 
 
+def genPopulations(populations, count): 
+    populations.clear() 
+    for i in range(0, count): 
+        newPopulation = Population() 
+        populations.append(newPopulation) 
+
 def spawn_asteroid(asteroid_list): 
     
     side = np.random.randint(0, 4) # Left = 0, Right = 1, Top = 2, Bottom = 3
@@ -58,9 +64,7 @@ def fire(bullet_list, playerShip):
     posY -= dy 
     
     bullet = Bullet(posX, posY, angle) 
-    bullet_list.add(bullet) 
-    
-    # None of the above works, finds the incorrect circle 
+    bullet_list.add(bullet)
     
 
 
@@ -146,6 +150,7 @@ def run_game():
 
         # Create game time, FPS
         clock = pygame.time.Clock()
+        startTime = pygame.time.get_ticks() 
         
         SPAWN_AST = pygame.USEREVENT 
         # MOVE_AST = pygame.USEREVENT 
@@ -179,7 +184,7 @@ def run_game():
             screen.fill((0, 0, 0))  # Black screen
             
             # Timer, might move this to another class 
-            milliseconds = pygame.time.get_ticks() 
+            milliseconds = pygame.time.get_ticks() - startTime 
             seconds = format(int((milliseconds / 1000) % 60), "02") 
             minutes = format(int((milliseconds / 1000) / 60), "02") 
             time = str(minutes + " : " + seconds) 
@@ -224,7 +229,6 @@ def run_game():
             for plr in ship_list: 
                 screen.blit(playerShip.getImg(), playerShip.getRect()) 
             for ast in asteroid_list: 
-                # newX, newY, xSize, ySize = ast.updateRect()
                 screen.blit(ast.getImg(), ast.getRect())
             for blt in bullet_list: 
                 screen.blit(blt.getImg(), blt.getRect())
@@ -244,18 +248,30 @@ def run_game():
         
         clock = pygame.time.Clock() 
         
+        invinsible = False 
+        
         populations = []
         
         SPAWN_AST = pygame.USEREVENT 
         pygame.time.set_timer(SPAWN_AST, 1000) # Spawn asteroid every 1s 
         
         # Generate populations 
-        populationCount = 200 # 10
-        for i in range(0, populationCount): 
-            newPopulation = Population() 
-            populations.append(newPopulation)
+        populationCount = 1 
+        genNum = 1
+        genPopulations(populations, populationCount) 
+        
         
         while progTrain:
+            
+            popAlive = 0 
+            for p in populations: 
+                if p.getStatus() == False: 
+                    popAlive += 1
+            if popAlive == 0: 
+                genNum += 1
+                print("Starting generation", genNum) 
+                genPopulations(populations, populationCount) 
+                
             
             events = pygame.event.get() 
             for event in events: 
@@ -263,28 +279,54 @@ def run_game():
                     progTrain = False 
                 if event.type == SPAWN_AST: 
                     for p in populations: 
-                        if len(p.getAstList()) < AST_LIMIT: 
-                            p.spawnAsteroid() 
-                    
+                        if p.getStatus() == False: 
+                            if len(p.getAstList()) < AST_LIMIT: 
+                                p.spawnAsteroid() 
+                        
             # Test if all populations are present and movement
             
             for p in populations: 
                 if p.getStatus() == False: 
+                    
+                    # Collisions 
+                    for blt in p.getBltList(): 
+                        bullet_x_ast = pygame.sprite.spritecollide(blt, p.getAstList(), False)
+                        for ast in bullet_x_ast: 
+                            ast.destroy() 
+                            blt.destroy() 
+                            p.score += 20 
+                    
+                    if invinsible == False: 
+                        plr_x_ast = pygame.sprite.spritecollide(p.getShip(), p.getAstList(), False) 
+                        if len(plr_x_ast) == 1: 
+                            p.nuke() 
+                            p.gameOver = True 
+                    
                     move = np.random.randint(0,2) # 0 = Left, 1 = Right 
                     p.shipMove(move)  
+                    
+                    if(np.random.randint(0,2) == 1): 
+                        p.fire(pygame.time.get_ticks()) 
                     
                     for ast in p.getAstList(): 
                         ast.move() 
                         ast.killCheck() 
+                    for blt in p.getBltList(): 
+                        blt.move() 
+                        blt.killCheck() 
             
             
             # UPDATES 
             screen.fill((0, 0, 0)) # Black 
+            pygame.draw.line(screen, WHITE, (50, 50), (600, 300), 1)
             
             for p in populations: 
-                screen.blit(p.getShipImg(), p.getShipRect()) 
-                for ast in p.getAstList(): 
-                    screen.blit(ast.getImg(), ast.getRect()) 
+                if p.getStatus() == False: 
+                    screen.blit(p.getShipImg(), p.getShipRect()) 
+                    for ast in p.getAstList(): 
+                        screen.blit(ast.getImg(), ast.getRect()) 
+                    for blt in p.getBltList(): 
+                        screen.blit(blt.getImg(), blt.getRect()) 
                     
             
             pygame.display.flip() 

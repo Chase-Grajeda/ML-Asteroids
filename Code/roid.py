@@ -38,9 +38,9 @@ class Asteroid(pygame.sprite.Sprite):
         self.xPos += self.dx * self.speed 
         self.yPos += self.dy * self.speed 
         self.rect.center = (self.xPos, self.yPos) 
-        
-    def updateRect(self): 
-        return self.xPos, self.yPos, WIDTH, HEIGHT
+    
+    def getSpeed(self): 
+        return self.speed 
         
     def killCheck(self): 
         if self.xPos >= 700 + 50 or self.xPos <= 0 - 50 or \

@@ -20,10 +20,19 @@ class Population():
         
         self.asteroid_list = pygame.sprite.Group() 
         
+        self.last_shot = 0 
+        self.firerate = 200 
         self.bullet_list = pygame.sprite.Group() 
         
+    # Functions 
     def getStatus(self): 
         return self.gameOver 
+    
+    def getScore(self): 
+        return self.score 
+    
+    def getShip(self): 
+        return self.playerShip
         
     def getShipImg(self): 
         return self.playerShip.getImg() 
@@ -53,12 +62,47 @@ class Population():
             xPos = np.random.randint(0, 701) 
             yPos = 500 
 
-        speed = np.random.randint(1, 3)
+        speed = np.random.randint(1, 4)
         
         asteroid = Asteroid(xPos, yPos, speed) 
         self.asteroid_list.add(asteroid) 
         
     def getAstList(self): 
         return self.asteroid_list
+    
+    def getBltList(self): 
+        return self.bullet_list 
+    
+    def fire(self, time): 
+        if(time >= self.last_shot + self.firerate or self.last_shot == 0): 
+            self.last_shot = time
+            
+            center = self.playerShip.getORect().center 
+            top = (self.playerShip.getORect()).top 
+            
+            radius = center[1] - top 
+            
+            posX = center[0]
+            posY = center[1] 
+            
+            angle = self.playerShip.getAngle() 
+            
+            dx = radius * math.sin(math.radians(angle)) 
+            dy = radius * math.cos(math.radians(angle)) 
+            
+            posX += dx 
+            posY -= dy 
+            
+            bullet = Bullet(posX, posY, angle) 
+            self.bullet_list.add(bullet) 
         
+        
+    # Destroy all assets in population 
+    def nuke(self): 
+        for plr in self.ship_list: 
+            plr.destroy() 
+        for ast in self.asteroid_list: 
+            ast.destroy() 
+        for blt in self.bullet_list: 
+            blt.destroy() 
     
