@@ -29,6 +29,10 @@ class Ship(pygame.sprite.Sprite):
             self.angle += 5
         if(direction == "left"): 
             self.angle -= 5 
+        if(self.angle > 360): 
+            self.angle -= 360 
+        if(self.angle < 0): 
+            self.angle += 360 
             
         self.tempImage, self.tempRect = self.rot(self.image, self.angle)
 

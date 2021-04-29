@@ -12,7 +12,7 @@ from vision import *
 DISPLAY_W = 700
 DISPLAY_H = 500
 BORDER_BOX = (100, 100, 500, 300) 
-AST_LIMIT = 1
+AST_LIMIT = 10
 FIRERATE = 200 # Milliseconds 
 
 def genPopulations(populations, count, surface): 
@@ -21,6 +21,56 @@ def genPopulations(populations, count, surface):
         newPopulation = Population() 
         newPopulation.genVision(surface) 
         populations.append(newPopulation) 
+
+def resetPopulations(populations): 
+    for p in populations: 
+        p.gameOver = False 
+        p.timeAlive = 0 
+        p.score = 0 
+    
+def matePopulations(pop1, pop2): 
+    new_net = Network(9, 9, 6, 3) 
+    new_net.create_mixed_weights(pop1, pop2) 
+    
+    return new_net 
+    
+def evolvePopulations(populations): 
+    mutation_cutoff = 0.4 
+    mutation_bad_keep = 0.2 
+    mutation_chance_lim = 0.4 
+    
+    cutoff = int(len(populations) * mutation_cutoff) 
+    good_pop = populations[0:cutoff] 
+    bad_pop = populations[cutoff:] 
+    num_bad_take = int(len(populations) * mutation_bad_keep) 
+    #print("Cutoff: ", cutoff) 
+    #print("bad_pop: ", len(bad_pop)) 
+    #print("Num_bad_take ", num_bad_take) 
+    
+    for p in bad_pop: 
+        p.network.modify_weights() 
+    
+    new_pops = []
+    
+    sel_bad_take = np.random.choice(np.arange(len(bad_pop)), num_bad_take, replace=False) 
+    
+    for index in sel_bad_take: 
+        new_pops.append(bad_pop[index]) 
+    
+    new_pops.extend(good_pop) 
+    
+    pops_needed = len(populations) - len(new_pops) 
+    
+    while len(new_pops) < len(populations): 
+        sel_to_breed = np.random.choice(np.arange(len(good_pop)), 2, replace=False) 
+        if sel_to_breed[0] != sel_to_breed[1]: 
+            new_pop = Population() 
+            new_pop.network = matePopulations(good_pop[sel_to_breed[0]], good_pop[sel_to_breed[1]]) 
+            if np.random.random() < mutation_chance_lim: 
+                new_pop.network.modify_weights() 
+            new_pops.append(new_pop) 
+    
+        
 
 def spawn_asteroid(asteroid_list): 
     
@@ -154,9 +204,8 @@ def run_game():
         clock = pygame.time.Clock()
         startTime = pygame.time.get_ticks() 
         
+        # Timed events
         SPAWN_AST = pygame.USEREVENT 
-        # MOVE_AST = pygame.USEREVENT 
-        
         pygame.time.set_timer(SPAWN_AST, 1000) # Trigger SPAWN_AST every 1s 
         
         while progPlay:
@@ -249,8 +298,9 @@ def run_game():
     if progTrain == True: 
         
         clock = pygame.time.Clock() 
+        timeStart = pygame.time.get_ticks() 
         
-        invinsible = True 
+        invinsible = False 
         showLos = False 
         
         populations = []
@@ -259,23 +309,27 @@ def run_game():
         pygame.time.set_timer(SPAWN_AST, 1000) # Spawn asteroid every 1s 
         
         # Generate populations 
-        populationCount = 1 
+        populationCount = 100
         genNum = 1
         genPopulations(populations, populationCount, screen) 
+        print("Starting generation", genNum) 
         
         
         while progTrain:
             
+            # Check status of populations 
             popAlive = 0 
             for p in populations: 
                 if p.getStatus() == False: 
                     popAlive += 1
             if popAlive == 0: 
                 genNum += 1
+                populations.sort(key=lambda x: x.fitness, reverse=True) 
+                evolvePopulations(populations) 
+                resetPopulations(populations) 
                 print("Starting generation", genNum) 
-                genPopulations(populations, populationCount, screen) 
                 
-            
+            # Check for in-game events 
             events = pygame.event.get() 
             for event in events: 
                 if event.type == pygame.QUIT: 
@@ -287,10 +341,16 @@ def run_game():
                                 p.spawnAsteroid() 
                         
             # Test if all populations are present and movement
+            net_inputs = [] 
             
             for p in populations: 
+                net_inputs = []
                 if p.getStatus() == False: 
                     
+                    # Fitness 
+                    p.timeAlive = pygame.time.get_ticks() - timeStart 
+                    p.updateFitness() 
+                                        
                     # Collisions 
                     for blt in p.getBltList(): 
                         bullet_x_ast = pygame.sprite.spritecollide(blt, p.getAstList(), False)
@@ -308,14 +368,30 @@ def run_game():
                     # Vision reactions 
                     los = p.getLos()
                     for i in range(0, len(los)): 
+                        astDistance = 500 
                         vision_x_ast = pygame.sprite.spritecollide(los[i], p.getAstList(), False) 
                         if len(vision_x_ast) > 0: 
-                            print("Collision on: ", i) 
+                            astDistance = p.astDistance(vision_x_ast) 
+                        net_inputs.append(astDistance) 
                     
-                    move = np.random.randint(0,2) # 0 = Left, 1 = Right 
-                    p.shipMove(move)  
+                    net_inputs.append(p.getShip().getAngle())
                     
-                    if(np.random.randint(0,2) == 1): 
+                    # Calculate moves from neural net 
+                    net_moves = p.runNetwork(net_inputs) 
+                            
+                    # Movement 
+                    # [0] is rotation left; [1] is rotation right; [2] is shoot 
+                    
+                    # Random moving 
+                    #move = np.random.randint(0,2) # 0 = Left, 1 = Right 
+                    #p.shipMove(move)  
+                    if net_moves[0] >= 0.5: 
+                        p.shipMove(0)
+                    if net_moves[1] >= 0.5: 
+                        p.shipMove(1) 
+                    
+                    #if(np.random.randint(0,2) == 1): 
+                    if net_moves[2] >= 0.5:
                         p.fire(pygame.time.get_ticks()) 
                     
                     for ast in p.getAstList(): 

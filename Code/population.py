@@ -5,6 +5,7 @@ from ship import *
 from roid import * 
 from bullet import * 
 from vision import * 
+from network import * 
 
 class Population(): 
     def __init__(self): 
@@ -12,7 +13,12 @@ class Population():
         super().__init__() 
         # Fitness 
         self.gameOver = False 
+        self.timeAlive = 0 
         self.score = 0 
+        self.fitness = 0 
+        
+        # Network 
+        self.network = Network(9, 9, 6, 3) 
         
         # Assets 
         self.playerShip = Ship() 
@@ -119,3 +125,22 @@ class Population():
     def getLos(self): 
         return self.los 
     
+    # Returns distance from player of closest asteroid 
+    def astDistance(self, astList): 
+        minDistance = 10000
+        xCenter = 700/2 
+        yCenter = 500/2 
+        for ast in astList: 
+            distance = math.sqrt(math.pow(ast.xPos - xCenter, 2) + math.pow(ast.yPos - yCenter, 2))
+            if distance < minDistance: 
+                minDistance = distance
+        
+        return minDistance 
+    
+    def runNetwork(self, input_list): 
+        outputs = self.network.get_outputs(input_list) 
+        
+        return outputs 
+    
+    def updateFitness(self): 
+        self.fitness = (self.score * 10) + (self.timeAlive / 100) 
