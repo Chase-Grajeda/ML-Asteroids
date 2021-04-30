@@ -16,6 +16,11 @@ class Population():
         self.timeAlive = 0 
         self.score = 0 
         self.fitness = 0 
+        self.usedLeft = False 
+        self.leftCount = 0 
+        self.usedRight = False 
+        self.rightCount = 0 
+        self.usedShoot = False 
         
         # Network 
         self.network = Network(9, 9, 6, 3) 
@@ -53,8 +58,12 @@ class Population():
     def shipMove(self, direction): 
         if direction == 0: 
             self.playerShip.rotate("left") 
+            self.usedLeft = True 
+            self.leftCount += 1
         if direction == 1: 
             self.playerShip.rotate("right") 
+            self.usedRight = True 
+            self.rightCount += 1 
             
     def spawnAsteroid(self): 
         side = np.random.randint(0, 4) # Left = 0, Right = 1, Top = 2, Bottom = 3
@@ -83,6 +92,7 @@ class Population():
         return self.bullet_list 
     
     def fire(self, time): 
+        self.usedShoot = True 
         if(time >= self.last_shot + self.firerate or self.last_shot == 0): 
             self.last_shot = time
             
@@ -126,16 +136,19 @@ class Population():
         return self.los 
     
     # Returns distance from player of closest asteroid 
+    # The closer it is, the larger the output
     def astDistance(self, astList): 
-        minDistance = 10000
         xCenter = 700/2 
         yCenter = 500/2 
+        furthestPoint = math.sqrt(math.pow(xCenter - 0, 2) + math.pow(yCenter - 0, 2))
+        minDistance = 10000
+        
         for ast in astList: 
             distance = math.sqrt(math.pow(ast.xPos - xCenter, 2) + math.pow(ast.yPos - yCenter, 2))
             if distance < minDistance: 
                 minDistance = distance
         
-        return minDistance 
+        return furthestPoint - minDistance 
     
     def runNetwork(self, input_list): 
         outputs = self.network.get_outputs(input_list) 
@@ -143,4 +156,36 @@ class Population():
         return outputs 
     
     def updateFitness(self): 
-        self.fitness = (self.score * 10) + (self.timeAlive / 100) 
+        strategy = 1
+        
+        if strategy == 1: 
+            self.fitness = (self.score * 100) + (self.timeAlive / 100) 
+            if self.usedShoot == True: 
+                self.fitness += 5000000
+            if self.usedLeft == True and self.usedRight == True: 
+                self.fitness += 1000000
+            elif self.usedLeft == True or self.usedRight == True: 
+                self.fitness += 10000
+                
+            if self.usedLeft == True and self.usedRight == True and self.usedShoot == True: 
+                self.fitness += 100000000000 
+            
+            if self.usedLeft == True and self.usedRight == True: 
+                if self.leftCount >= self.rightCount: 
+                    if (self.rightCount / self.leftCount) >= 0.6: 
+                        self.fitness += 100000000000
+                elif self.rightCount >= self.leftCount: 
+                    if (self.leftCount / self.rightCount) >= 0.6: 
+                        self.fitness += 100000000000 
+            
+            if int(self.score/20) >= 20:  
+                self.fitness += 1000000 
+            if int(self.score/20) >= 40: 
+                self.fitness += 1000000 
+            if int(self.score/20) >= 60: 
+                self.fitness += 1000000 
+        
+        
+        if strategy == 2: 
+            self.fitness = (self.score + self.timeAlive) 
+        

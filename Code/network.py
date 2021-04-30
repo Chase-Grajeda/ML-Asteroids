@@ -53,7 +53,7 @@ class Network():
     def modify_array(self, array): 
         for i in np.nditer(array, op_flags=['readwrite']): 
             if np.random.random() < MUTATION_CHANCE: 
-               i[...] = np.random.random_sample() - 0.5 
+               i[...] = np.random.random_sample() - 0.4
         
     def getMixedArrs(self, arr1, arr2): 
         total_entries = arr1.size 

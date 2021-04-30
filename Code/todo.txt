@@ -1,7 +1,7 @@
 CURRENT ISSUES: 
 - Make class / list for all text bodies (it's just more efficient) 
 - Decided to not use speed in asteroid distance calculation 
-- Initial asteroid distance is set to 500 if there are no asteroids in sight 
+- Initial asteroid distance is set to 0 if there are no asteroids in sight 
 
 TODO: 
 - Implement weight data storage 

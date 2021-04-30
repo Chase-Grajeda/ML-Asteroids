@@ -27,6 +27,10 @@ def resetPopulations(populations):
         p.gameOver = False 
         p.timeAlive = 0 
         p.score = 0 
+        p.fitness = 0 
+        p.usedLeft = False 
+        p.usedRight = False
+        p.usedShoot = False 
     
 def matePopulations(pop1, pop2): 
     new_net = Network(9, 9, 6, 3) 
@@ -308,8 +312,10 @@ def run_game():
         SPAWN_AST = pygame.USEREVENT 
         pygame.time.set_timer(SPAWN_AST, 1000) # Spawn asteroid every 1s 
         
+        genStartTime = pygame.time.get_ticks() 
+        
         # Generate populations 
-        populationCount = 100
+        populationCount = 200
         genNum = 1
         genPopulations(populations, populationCount, screen) 
         print("Starting generation", genNum) 
@@ -324,10 +330,18 @@ def run_game():
                     popAlive += 1
             if popAlive == 0: 
                 genNum += 1
+                for p in populations:
+                    p.updateFitness() 
                 populations.sort(key=lambda x: x.fitness, reverse=True) 
+                print("Best fitness: ", populations[0].fitness) 
+                print("Time to complete: ", pygame.time.get_ticks()-genStartTime)
+                print("")  
                 evolvePopulations(populations) 
                 resetPopulations(populations) 
                 print("Starting generation", genNum) 
+                genStartTime = pygame.time.get_ticks() 
+                timeStart = pygame.time.get_ticks() 
+                
                 
             # Check for in-game events 
             events = pygame.event.get() 
@@ -349,7 +363,7 @@ def run_game():
                     
                     # Fitness 
                     p.timeAlive = pygame.time.get_ticks() - timeStart 
-                    p.updateFitness() 
+                    #p.updateFitness() 
                                         
                     # Collisions 
                     for blt in p.getBltList(): 
@@ -368,7 +382,7 @@ def run_game():
                     # Vision reactions 
                     los = p.getLos()
                     for i in range(0, len(los)): 
-                        astDistance = 500 
+                        astDistance = 0 
                         vision_x_ast = pygame.sprite.spritecollide(los[i], p.getAstList(), False) 
                         if len(vision_x_ast) > 0: 
                             astDistance = p.astDistance(vision_x_ast) 
@@ -385,13 +399,13 @@ def run_game():
                     # Random moving 
                     #move = np.random.randint(0,2) # 0 = Left, 1 = Right 
                     #p.shipMove(move)  
-                    if net_moves[0] >= 0.5: 
+                    if net_moves[0] >= 0.7: 
                         p.shipMove(0)
-                    if net_moves[1] >= 0.5: 
+                    if net_moves[1] >= 0.7: 
                         p.shipMove(1) 
                     
                     #if(np.random.randint(0,2) == 1): 
-                    if net_moves[2] >= 0.5:
+                    if net_moves[2] >= 0.7:
                         p.fire(pygame.time.get_ticks()) 
                     
                     for ast in p.getAstList(): 
