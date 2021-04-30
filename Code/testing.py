@@ -1,4 +1,3 @@
-num = 100
-cutoff = 0.2
-
-print(int(num * cutoff))
+num = "0.8347238742389"
+fnum = float(num) 
+print(fnum) 

@@ -75,61 +75,16 @@ class Network():
 
         return res 
     
-    
-    # For the love of god do not run this 
-    # This needs to be adapted to the main program 
-    # Uses pseudo code, so be careful 
-#    def evolve(self, populations): 
-#        cutoff = int(len(populations) * MUTATION_CUTOFF) 
-#        good_ships = populations[0:cutoff] 
-#        bad_ships = populations[cutoff:] 
-#        num_bad_to_take = int(len(populations) * MUTATION_BAD_KEEP) 
-#        
-#        for b in bad_ships: 
-#            b.modify_weights() 
-#        
-#        new_birds = []
-#        
-#        idx_bad_to_take = np.random.choice(np.arange(len(bad_ships)), num_bad_to_take, replace=False)
-#        
-#        for index in idx_bad_to_take: 
-#            new_birds.append(bad_ships[index]) 
-#            
-#        new_birds.extend(good_ships) 
-#        
-#        children_needed = len(populations) - len(new_birds) 
-#        
-#        while len(new_birds) < len(populations): 
-#            idx_to_breed = np.random.choice(np.arange(len(good_ships)), 2, replace=False) 
-#            if idx_to_breed[0] != idx_to_breed[1]: 
-#                new_ship = Network.createOffspring(good_ships[idx_to_breed[0]], good_ships[idx_to_breed[1]]) 
-#                if np.random.random() < MUTATION_CHANCE_LIMIT: 
-#                    new_ship.network.modify_weights() 
-#                new_birds.append(new_ship) 
-    
+    def fillArray(self, file): 
+        weights = file.readlines() 
+        idx = 0 
 
-#def test1(): 
-    #net = Network(9, 9, 6, 3) 
-    #inputs = [0.2, 0.3, 0.4, 0.5, 0.6, 0.1, 0.3, 0.6, 0.7] 
-    #output = net.get_max_value(inputs) 
-    #print("Output", output, sep='\n')
-
-#def test():  
-#    net = Network(9, 9, 6, 3)
-#    ar1 = np.random.uniform(-0.5, 0.5, size=(3,4)) 
-#    ar2 = np.random.uniform(-0.5, 0.5, size=(3,4)) 
-#    print("ar1.size", ar1.size, sep='\n') 
-#    print("ar1", ar1, sep='\n') 
-#    
-#    net.modify_array(ar1) 
-#    print("ar1", ar1, sep='\n') 
-#    
-#    print("") 
-#    
-#    print("ar1", ar1, sep='\n') 
-#    print("ar2", ar2, sep='\n') 
-#    
-#    mixed = net.getMixedArrs(ar1, ar2) 
-#    print("Mixed", mixed, sep='\n') 
-    
-# test()  
+        for i in np.nditer(self.weight_input_h1, op_flags=["readwrite"]): 
+            i[...] = float(weights[idx]) 
+            idx += 1
+        for i in np.nditer(self.weight_input_h2, op_flags=["readwrite"]): 
+            i[...] = float(weights[idx])
+            idx += 1
+        for i in np.nditer(self.weight_output, op_flags=["readwrite"]): 
+            i[...] = float(weights[idx]) 
+            idx += 1

@@ -2,6 +2,7 @@ import numpy as np
 import pygame
 import math 
 import sys
+import os 
 from ship import *
 from roid import *
 from bullet import * 
@@ -14,6 +15,26 @@ DISPLAY_H = 500
 BORDER_BOX = (100, 100, 500, 300) 
 AST_LIMIT = 10
 FIRERATE = 200 # Milliseconds 
+
+def clearSavedGens(): 
+    DIR = "SavedGenerations"
+    numGens = (len([name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name))]))
+    
+    if numGens != 0:  
+        for i in range(1, numGens+1): 
+            fileName = "gen" + str(i) + ".txt"
+            os.remove("SavedGenerations/"+fileName) 
+            
+def saveBest(net, num): 
+    name = "gen" + str(num) +".txt" 
+    file = open("SavedGenerations/"+name, "w") 
+    for i in np.nditer(net.weight_input_h1): 
+        file.write(str(i)+"\n") 
+    for i in np.nditer(net.weight_input_h2): 
+        file.write(str(i)+"\n") 
+    for i in np.nditer(net.weight_output): 
+        file.write(str(i)+"\n") 
+    file.close() 
 
 def genPopulations(populations, count, surface): 
     populations.clear() 
@@ -301,6 +322,8 @@ def run_game():
     
     if progTrain == True: 
         
+        clearSavedGens() 
+        
         clock = pygame.time.Clock() 
         timeStart = pygame.time.get_ticks() 
         
@@ -329,15 +352,16 @@ def run_game():
                 if p.getStatus() == False: 
                     popAlive += 1
             if popAlive == 0: 
-                genNum += 1
                 for p in populations:
                     p.updateFitness() 
                 populations.sort(key=lambda x: x.fitness, reverse=True) 
+                saveBest(populations[0].network, genNum) 
                 print("Best fitness: ", populations[0].fitness) 
                 print("Time to complete: ", pygame.time.get_ticks()-genStartTime)
                 print("")  
                 evolvePopulations(populations) 
                 resetPopulations(populations) 
+                genNum += 1
                 print("Starting generation", genNum) 
                 genStartTime = pygame.time.get_ticks() 
                 timeStart = pygame.time.get_ticks() 
@@ -439,8 +463,16 @@ def run_game():
     # TEST DATA SET ---------------------------
     
     if progTest == True: 
+        
+        GEN_TO_TEST = 1 
+        
+        network = Network(9, 9, 6, 3) 
+        name = "gen" + str(GEN_TO_TEST) + ".txt" 
+        file = open("SavedGenerations/"+name, "r") 
+        network.fillArray(file) 
+        file.close() 
+        
         while progTest: 
-            # This will eventually do things 
             progTest = False 
 
             
