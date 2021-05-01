@@ -77,8 +77,7 @@ class Network():
     
     def fillArray(self, file): 
         weights = file.readlines() 
-        idx = 0 
-
+        idx = 0
         for i in np.nditer(self.weight_input_h1, op_flags=["readwrite"]): 
             i[...] = float(weights[idx]) 
             idx += 1

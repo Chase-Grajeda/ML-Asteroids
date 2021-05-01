@@ -137,7 +137,7 @@ def fire(bullet_list, playerShip):
     dx = radius * math.sin(math.radians(angle)) 
     dy = radius * math.cos(math.radians(angle)) 
     
-    posX += dx  
+    posX += dx   
     posY -= dy 
     
     bullet = Bullet(posX, posY, angle) 
@@ -213,6 +213,7 @@ def run_game():
         
     # SOLO PLAY -------------------------------
     if progPlay == True: 
+        
         playerShip = Ship()
         ship_list = pygame.sprite.Group() 
         ship_list.add(playerShip)
@@ -466,15 +467,116 @@ def run_game():
         
         GEN_TO_TEST = 1 
         
-        network = Network(9, 9, 6, 3) 
+        showLos = False 
+        
+        p = Population() 
+        p.genVision(screen) 
+        
         name = "gen" + str(GEN_TO_TEST) + ".txt" 
         file = open("SavedGenerations/"+name, "r") 
-        network.fillArray(file) 
+        p.network.fillArray(file) 
         file.close() 
         
+        clock = pygame.time.Clock() 
+        timeStart = pygame.time.get_ticks() 
+        finalTime = 0 
+        
+        SPAWN_AST = pygame.USEREVENT 
+        pygame.time.set_timer(SPAWN_AST, 1000) # Spawn asteroid every 1s 
+        
+        
         while progTest: 
-            progTest = False 
-
+            
+            events = pygame.event.get() 
+            for event in events: 
+                if event.type == pygame.QUIT: 
+                    progTest = False 
+                if event.type == SPAWN_AST: 
+                    if len(p.getAstList()) < AST_LIMIT: 
+                        p.spawnAsteroid() 
+            
+            # On-screen timer 
+            if p.getStatus() == False: 
+                milliseconds = pygame.time.get_ticks() - timeStart 
+                seconds = format(int((milliseconds / 1000) % 60), "02") 
+                minutes = format(int((milliseconds / 1000) / 60), "02") 
+                time = str(minutes + " : " + seconds) 
+            finalTime = time 
+            
+            time_text = font.render(finalTime, True, WHITE) 
+            time_textRect = time_text.get_rect(right=690, top=5) 
+            
+            # Score text, might move this to another class 
+            score_text = font.render(str(format(p.score, "08")), True, WHITE)
+            score_textRect = score_text.get_rect(left=10, top=5)
+            
+            net_inputs = []
+            
+            if p.getStatus() == False: 
+                                    
+                # Collisions 
+                for blt in p.getBltList(): 
+                    bullet_x_ast = pygame.sprite.spritecollide(blt, p.getAstList(), False)
+                    for ast in bullet_x_ast: 
+                        ast.destroy() 
+                        blt.destroy() 
+                        p.score += 20 
+                
+                plr_x_ast = pygame.sprite.spritecollide(p.getShip(), p.getAstList(), False) 
+                if len(plr_x_ast) == 1: 
+                    p.nuke() 
+                    p.gameOver = True 
+                
+                # Vision reactions 
+                los = p.getLos()
+                for i in range(0, len(los)): 
+                    astDistance = 0 
+                    vision_x_ast = pygame.sprite.spritecollide(los[i], p.getAstList(), False) 
+                    if len(vision_x_ast) > 0: 
+                        astDistance = p.astDistance(vision_x_ast) 
+                    net_inputs.append(astDistance) 
+                
+                net_inputs.append(p.getShip().getAngle())
+                
+                # Calculate moves from neural net 
+                net_moves = p.runNetwork(net_inputs) 
+                        
+                # Movement 
+                # [0] is rotation left; [1] is rotation right; [2] is shoot 
+                if net_moves[0] >= 0.7: 
+                    p.shipMove(0)
+                if net_moves[1] >= 0.7: 
+                    p.shipMove(1) 
+                
+                if net_moves[2] >= 0.7:
+                    p.fire(pygame.time.get_ticks()) 
+                
+                for ast in p.getAstList(): 
+                    ast.move() 
+                    ast.killCheck() 
+                for blt in p.getBltList(): 
+                    blt.move() 
+                    blt.killCheck() 
+            
+            # UPDATES 
+            screen.fill((0, 0, 0)) # Black 
+            
+            screen.blit(time_text, time_textRect) 
+            screen.blit(score_text, score_textRect)
+            
+            if p.getStatus() == False: 
+                screen.blit(p.getShipImg(), p.getShipRect()) 
+                for ast in p.getAstList(): 
+                    screen.blit(ast.getImg(), ast.getRect()) 
+                for blt in p.getBltList(): 
+                    screen.blit(blt.getImg(), blt.getRect()) 
+                if showLos == True: 
+                    for los in p.getLos(): 
+                        screen.blit(los.getImg(), los.getRect())
+                    
+            
+            pygame.display.flip() 
+            clock.tick(60) 
             
                         
     # ----------------------------------------- 

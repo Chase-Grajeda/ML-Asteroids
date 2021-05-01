@@ -1,30 +1,8 @@
 CURRENT ISSUES: 
 - Make class / list for all text bodies (it's just more efficient) 
-- Decided to not use speed in asteroid distance calculation 
-- Initial asteroid distance is set to 0 if there are no asteroids in sight 
 
 TODO: 
-- Implement weight data storage 
-    - Store training data (so it can be resumed) 
-    - Store data from each generation and the generation number 
-
-- Game Over handling for solo play 
-
-
-
-NOTES: 
-- Asteroid spawner is not 100% random 
-    - Asteroids are more likely to spawn on the sides rather than top or bottom 
-    - Left and right have uniform probability 
-    - Top and bottom have uniform probability
-
-- The good video: 
-    - https://www.youtube.com/watch?v=JWJCSaO0vew&list=PLZ1QII7yudbebDQ1Kiqdh1LNz6PavcptO&index=7
-
-Fitness: 
-- Time alive 
-- Score 
-
+- Figure out best fitness calculation strategy 
 
 
 
