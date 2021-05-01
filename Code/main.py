@@ -330,6 +330,7 @@ def run_game():
         
         invinsible = False 
         showLos = False 
+        bestFitness = 0 
         
         populations = []
         
@@ -357,6 +358,9 @@ def run_game():
                     p.updateFitness() 
                 populations.sort(key=lambda x: x.fitness, reverse=True) 
                 saveBest(populations[0].network, genNum) 
+                if populations[0].fitness >= bestFitness: 
+                    bestFitness = populations[0].fitness 
+                    print("NEW BEST FIT")
                 print("Best fitness: ", populations[0].fitness) 
                 print("Time to complete: ", pygame.time.get_ticks()-genStartTime)
                 print("")  
@@ -465,7 +469,7 @@ def run_game():
     
     if progTest == True: 
         
-        GEN_TO_TEST = 1 
+        GEN_TO_TEST = 1
         
         showLos = False 
         

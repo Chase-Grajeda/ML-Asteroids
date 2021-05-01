@@ -4,6 +4,8 @@ CURRENT ISSUES:
 TODO: 
 - Figure out best fitness calculation strategy 
 
+Good trials: 
+- Trial 1
 
 
 
