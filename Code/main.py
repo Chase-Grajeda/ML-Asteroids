@@ -426,8 +426,6 @@ def run_game():
                     # [0] is rotation left; [1] is rotation right; [2] is shoot 
                     
                     # Random moving 
-                    #move = np.random.randint(0,2) # 0 = Left, 1 = Right 
-                    #p.shipMove(move)  
                     if net_moves[0] >= 0.7: 
                         p.shipMove(0)
                     if net_moves[1] >= 0.7: 
@@ -469,7 +467,7 @@ def run_game():
     
     if progTest == True: 
         
-        GEN_TO_TEST = 1
+        GEN_TO_TEST = 1251
         
         showLos = False 
         

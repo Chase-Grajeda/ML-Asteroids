@@ -170,18 +170,19 @@ class Population():
             if self.usedLeft == True and self.usedRight == True and self.usedShoot == True: 
                 self.fitness += 100000000000 
             
-            if self.usedLeft == True and self.usedRight == True and (self.timeAlive / 1000 >= 15): 
+            if self.usedLeft == True and self.usedRight == True: 
                 if self.leftCount >= self.rightCount: 
                     if (self.rightCount / self.leftCount) >= 0.6: 
                         self.fitness += 100000000000
                 elif self.rightCount >= self.leftCount: 
                     if (self.leftCount / self.rightCount) >= 0.6: 
                         self.fitness += 100000000000 
-                
-            score_lim = 20 
-            while int(self.score/20) >= score_lim: 
-                self.fitness += 1000000 
-                score_lim += 20 
+            
+            if self.usedLeft == True and self.usedRight == True: 
+                score_lim = 20 
+                while int(self.score/20) >= score_lim: 
+                    self.fitness += 1000000 
+                    score_lim += 20 
         
         
         if strategy == 2: 
